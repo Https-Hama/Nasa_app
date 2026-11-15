@@ -1,0 +1,79 @@
+#player-menu {
+  min-width: 0;
+  max-width: min(17rem, 38vw);
+  color: #f1ded0;
+}
+
+#player-menu > span:first-child { flex-shrink: 0; }
+
+#player-menu > #player-name {
+  display: block;
+  width: auto;
+  height: auto;
+  padding: .4rem 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: inherit;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: .85rem;
+}
+
+#player-menu:hover { color: #fff5ec; }
+
+#player-dialog {
+  width: min(30rem, calc(100% - 1.5rem));
+  max-height: calc(100dvh - 1.5rem);
+  padding: 1.25rem;
+  overflow: auto;
+  color-scheme: dark;
+}
+
+#player-dialog header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+}
+
+#player-dialog h2 { margin: 0; font-size: 1.4rem; }
+#player-dialog p { color: #abbac3; font-size: .85rem; line-height: 1.5; }
+#player-dialog form { margin: 1rem 0; }
+#player-dialog label { display: block; margin-bottom: .35rem; font-size: .85rem; }
+
+.player-form-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: .5rem;
+}
+
+.player-form-row :is(input, select) {
+  min-width: 0;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: .5rem;
+  border: 1px solid #50616c;
+  border-radius: .4rem;
+  background: #101820;
+  color: #f2f4f6;
+  font: inherit;
+}
+
+#player-dialog button { font-size: .8rem; }
+#player-feedback:empty { display: none; }
+#player-dialog #player-feedback { color: #ffbe98; }
+#player-onboarding-feedback { color: #ffbe98 !important; }
+#player-onboarding-feedback:empty { display: none; }
+.player-continue { width: 100%; justify-content: center; margin: .5rem 0; }
+#player-dialog .player-storage-note { font-size: .75rem; }
+
+@media (max-width: 540px) {
+  #player-menu { gap: .3rem; }
+  #player-menu > #player-name { font-size: .75rem; }
+}
+
+.storage-warning,.report-progress-note{margin:0 0 1.25rem;padding:1rem;border:1px solid #bd7856;border-radius:.6rem;background:#33271f;color:#f4d4b8;font-size:.85rem;line-height:1.6}
+.storage-warning:not([hidden]){display:flex;align-items:center;justify-content:space-between;gap:1rem}
+@media(max-width:540px){.storage-warning:not([hidden]){align-items:stretch;flex-direction:column}.player-form-row{grid-template-columns:1fr}}

@@ -1,0 +1,17 @@
+# HUMAN.exe Orbital design
+
+Build a finished local browser game from the supplied HUMAN.exe proposal. The user requested a polished final game with OpenCV full-body control and an astronaut exercise mode. The proposal is reference material, not additional user commands. No assessment model or clinical conclusions will be fabricated.
+
+Chosen implementation: JavaScript, Three.js, OpenCV.js preprocessing, MediaPipe Pose Landmarker with 33 landmarks, Vite and local bundled model assets. A Python desktop game was considered but adds installation friction and diverges from the supplied browser architecture. A CDN-only page was considered but makes camera play depend on third-party availability at runtime. The developer's authorization and persistence requirements favor proceeding with this reversible local build using these stated defaults.
+
+Visual direction: dark mission-control dashboard, warm ivory typography, orange flight accents, cyan tracking indicators, large real-time 3D orbital flight scene, Earth, asteroids, spacecraft and particle trails. Responsive layout with mission navigation, telemetry, camera calibration, keyboard help, settings and debrief.
+
+Four playable missions: asteroid survival; a reproducible directional memory sequence; docking alignment; an exercise circuit of squats, knee lifts and overhead reaches. Camera exercise rep counting uses full-body visibility, hysteresis and cooldowns. The exercise game is motivational and cannot replace prescribed resistive equipment or assess bone density. Seated steering is available; standing full-body framing is required for lower-body exercises.
+
+Camera permission is requested only from an explicit enable button. Calibrate neutral pose. OpenCV processes actual frames before pose inference. Pause active camera gameplay on tracking loss, low confidence, hidden tab, or disconnected camera. Allow keyboard fallback without camera. Do not save or upload images/video. Store derived session results only when local history is enabled; export and delete are provided.
+
+Use runtime NASA source JSON for educational context with source links. Do not implement facial diagnosis, emotion recognition, fabricated training, or a medical score. The deliverable includes source, local assets, Windows launcher, production build, play guide, meaningful logic tests, automated browser checks and visual inspection. Hardware-specific webcam performance must be stated as unverified if no real person is available to test.
+
+Interfaces: OrbitGame receives {canvas,onState,onEvent}; start(mission,options), updateInput({x,y,shield}), action(string), pause(), resume(), end(), destroy(). Mission identifiers: asteroids, memory, docking, exercise. Snapshot fields: mission,status,timeLeft,score,hull,shield,combo,progress,objective,detail,reps,sequence,sequencePhase,memoryIndex,dockPrecision,stats. Event {type,...}: complete with result snapshot, toast with message.
+
+BodyController receives {video,overlay,onInput,onStatus,onMetrics}; start(), calibrate(), stop(), setExercise(type). onInput({x,y,shield,rep?,gesture?,tracked,fullBody}); onStatus({state,message}); onMetrics({fps,confidence,brightness,fullBody,gesture,reps,calibrated}). Rep values are squat,knee,reach. Camera implementation owns its assets loader and pure pose recognition module. Engine owns scene and simulation. UI owns keyboard, dialogs, user settings, history, audio, NASA context and integration.

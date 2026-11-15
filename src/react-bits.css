@@ -1,0 +1,133 @@
+/* React Bits by David Haz, pinned at 4e0d091d3b1ea8b7aadef33716a8d99d164ae4ce.
+ * Adapted for HUMAN.exe — Orbital. License: ../THIRD_PARTY_NOTICES.md. */
+.star-border {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.875rem 1.5rem;
+  border: 0;
+  border-radius: var(--star-border-radius);
+  background: var(--star-border-surface);
+  color: var(--star-border-text);
+  font: inherit;
+  font-weight: 500;
+  line-height: 1.25;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.star-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 var(--star-border-thickness) var(--star-border-track);
+  pointer-events: none;
+}
+
+.star-border__light {
+  position: absolute;
+  top: -48px;
+  left: -48px;
+  z-index: -1;
+  width: calc(100% + 96px);
+  height: calc(100% + 96px);
+  pointer-events: none;
+}
+
+button.star-border,
+a.star-border {
+  cursor: pointer;
+}
+
+.star-border:focus-visible {
+  outline: 2px solid var(--star-border-track);
+  outline-offset: 3px;
+}
+
+.star-border:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.shiny-text {
+  position: relative;
+  display: inline-block;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.shiny-text__glow {
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: blur(0.14em);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Native controls keep their own hit area, label and focus handling. */
+#launch:has(#launch-react) {
+  position: relative;
+  isolation: isolate;
+  overflow: visible;
+}
+#launch-react {
+  position: absolute;
+  inset: 0;
+  display: block;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 180ms ease;
+}
+#launch-label {
+  position: relative;
+  z-index: 1;
+}
+#launch:disabled #launch-react { opacity: 0.22; }
+#launch-react .orbital-launch-aura,
+#launch-react .orbital-star-static {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.orbital-star-static {
+  box-shadow: inset 0 0 0 1px rgba(255, 244, 210, 0.55);
+}
+#react-tagline { display: inline-block; }
+.orbital-shiny-text,
+.orbital-shiny-static {
+  font: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+}
+.orbital-shiny-static { color: #c4d0d3; }
+@media (prefers-reduced-motion: reduce) {
+  #launch-react { transition: none; }
+}
+@media (forced-colors: active) {
+  .orbital-shiny-text {
+    background: none !important;
+    -webkit-text-fill-color: CanvasText;
+    color: CanvasText;
+  }
+  .shiny-text__glow, .star-border__light { display: none; }
+  .orbital-star-static { box-shadow: none; }
+}

@@ -1,0 +1,66 @@
+{
+  "checkedAt": "2026-11-14T11:38:58.443Z",
+  "url": "http://127.0.0.1:4173",
+  "camera": "Chromium synthetic test pattern; no human subject",
+  "limitations": "Verifies production loading, local processing and lifecycle only. Human pose accuracy and hardware camera FPS remain unverified.",
+  "pageErrors": [],
+  "consoleErrors": [],
+  "visionAssets": [
+    {
+      "url": "http://127.0.0.1:4173/vendor/mediapipe/vision_wasm_internal.js",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4173/vendor/mediapipe/vision_wasm_internal.wasm",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4173/vendor/opencv.js",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4173/models/pose_landmarker_lite.task",
+      "status": 200
+    }
+  ],
+  "active": {
+    "status": "NO POSE",
+    "message": "Tracking lost. Show your shoulders and hips to continue.",
+    "openCvReady": true,
+    "liveStream": true,
+    "trackStates": [
+      "live"
+    ],
+    "videoDimensions": [
+      640,
+      480
+    ],
+    "videoTime": 11.469487,
+    "trackingMetric": "3 FPS"
+  },
+  "stopped": {
+    "status": "OFFLINE",
+    "trackStates": [
+      "ended"
+    ],
+    "videoReleased": true,
+    "enableButtonVisible": true,
+    "previewHidden": true
+  },
+  "externalRequests": [],
+  "uploadRequests": [],
+  "passed": true,
+  "browserClosed": true,
+  "requestCount": 16,
+  "runtimeFailureFallback": {
+    "checkedAt": "2026-11-14T11:43:03.693Z",
+    "passed": true,
+    "method": "Dispatch ended event on a live synthetic camera track through the real production event listener",
+    "trackState": "ended",
+    "videoReleased": true,
+    "openCvReady": true,
+    "automaticKeyboardFallback": true,
+    "resumeWithoutCamera": true,
+    "pageErrors": []
+  }
+}

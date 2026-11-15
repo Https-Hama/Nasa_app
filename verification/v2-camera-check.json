@@ -1,0 +1,160 @@
+{
+  "checkedAt": "2026-11-14T12:35:16.925Z",
+  "url": "http://127.0.0.1:4173",
+  "camera": "Chromium synthetic test pattern; no human subject",
+  "limitations": "Verifies production asset loading, genuine local camera/OpenCV/face inference and consent/resource lifecycle. Human face/body accuracy and hardware-camera performance remain unverified.",
+  "diagnostics": {
+    "initialFailure": "OpenCV published self.Module===self.cv, a self-returning thenable, which stalled subsequent MediaPipe initialization before model fetch. Foreign Module is now cleared while cv retains its runtime.",
+    "sequentialPoseThenFaceWithoutOpenCv": {
+      "poseMs": 873.7,
+      "faceMs": 153.7,
+      "passed": true
+    },
+    "openCvThenFaceAfterClearingForeignModule": {
+      "faceMs": 787.2,
+      "cvMatRowsBefore": 2,
+      "cvMatRowsAfter": 3,
+      "cvProcessedCanvasRows": 480,
+      "faceCount": 0,
+      "modelClosed": true,
+      "passed": true
+    }
+  },
+  "pageErrors": [],
+  "consoleErrors": [],
+  "runtimeMessages": [
+    "INFO: Created TensorFlow Lite XNNPACK delegate for CPU."
+  ],
+  "visionAssets": [
+    {
+      "url": "http://127.0.0.1:4173/vendor/opencv.js",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4173/vendor/mediapipe/vision_wasm_internal.js",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4173/vendor/mediapipe/vision_wasm_internal.wasm",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4173/models/pose_landmarker_lite.task",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4173/vendor/mediapipe/vision_wasm_internal.js",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4173/vendor/mediapipe/vision_wasm_internal.wasm",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4173/models/face_landmarker.task",
+      "status": 200
+    }
+  ],
+  "externalRequests": [],
+  "uploadRequests": [],
+  "checks": [
+    "Camera and actual OpenCV/pose processing initialize without observation consent or a face-model request.",
+    "Full 30-second face check uses real CPU inference on the OpenCV-processed canvas; synthetic no-person frames consistently return zero faces.",
+    "Measured export preserves null unavailable face/body metrics and explicit missing-evidence quality reasons.",
+    "Withdrawing consent during a running check closes the real face model, stops inference/callbacks, cancels the timer and enables Launch while camera controls stay live."
+  ],
+  "bundle": "/assets/index-DX_ndUEC.js",
+  "cameraWithoutObservation": {
+    "cameraActive": true,
+    "openCvReady": true,
+    "faceModelRequested": false,
+    "status": "NO POSE"
+  },
+  "faceReady": {
+    "elapsedMs": 6928,
+    "faceAsset200": true
+  },
+  "faceCheckDuring": {
+    "launchDisabled": true,
+    "coverage": "—",
+    "status": "FINDING A CLEAR, OPEN-EYE BASELINE"
+  },
+  "faceCheckAfter": {
+    "coverage": "—",
+    "launchEnabled": true,
+    "pipeline": {
+      "models": 1,
+      "closed": 0,
+      "detects": 397,
+      "processedFrames": 397,
+      "faceCounts": [
+        0
+      ],
+      "delegates": [
+        "CPU"
+      ]
+    }
+  },
+  "noPersonObservations": {
+    "protocol": "orbital-observation-v2",
+    "durationSec": 37.534,
+    "face": {
+      "validSeconds": 0,
+      "coverage": 0,
+      "meanFps": null,
+      "blinkCount": null,
+      "blinkRate": null,
+      "eyeClosurePct": null,
+      "longClosureCount": null,
+      "longestClosureSec": null,
+      "mouthOpenEvents": null,
+      "headRollMeanDeg": null,
+      "headRollRangeDeg": null,
+      "baselineReady": false,
+      "qualityReasons": [
+        "no-face",
+        "no-valid-face-samples",
+        "open-eye-baseline-incomplete",
+        "insufficient-eye-observation",
+        "low-face-coverage"
+      ]
+    },
+    "body": {
+      "validSeconds": 0,
+      "coverage": 0,
+      "fullBodyCoverage": 0,
+      "leftHandTravel": null,
+      "rightHandTravel": null,
+      "kneeLifts": null,
+      "squats": null,
+      "shields": null,
+      "boosts": null,
+      "meanTorsoSway": null,
+      "qualityReasons": [
+        "body-not-tracked",
+        "no-valid-body-samples",
+        "low-body-coverage"
+      ]
+    }
+  },
+  "faceCheckDurationSec": 30,
+  "withdrawalDuringCheck": {
+    "consentChecked": false,
+    "faceCheckDisabled": true,
+    "checkProgressHidden": true,
+    "launchEnabled": true,
+    "updatesAfterWithdrawal": 0,
+    "faceDetectionsAfterWithdrawal": 0,
+    "faceModelsClosed": 1,
+    "cameraStillLive": true
+  },
+  "disconnect": {
+    "released": true,
+    "trackStates": [
+      "ended"
+    ],
+    "status": "OFFLINE"
+  },
+  "passed": true,
+  "browserClosed": true
+}

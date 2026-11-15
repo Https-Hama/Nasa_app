@@ -1,0 +1,74 @@
+{
+  "title": "NASA Human Research Program basis",
+  "challenge": "Create Health Monitoring Software for Astronauts on Space Missions",
+  "updated": "2026-11-14",
+  "sources": [
+    {
+      "id": "nasa-exercise",
+      "title": "NASA: Astronaut Exercise",
+      "url": "https://www.nasa.gov/missions/station/iss-research/astronaut-exercise/",
+      "summary": "ISS exercise equipment includes ARED for resistance exercise, the T2 treadmill and the CEVIS cycle ergometer. NASA continues to study equipment and exercise protocols for muscle, bone and cardiovascular health."
+    },
+    {
+      "id": "nasa-bone-muscle",
+      "title": "NASA: Counteracting Bone and Muscle Loss in Microgravity",
+      "url": "https://www.nasa.gov/humans-in-space/counteracting-bone-and-muscle-loss-in-microgravity/",
+      "summary": "Microgravity changes the loading of muscles and bones. ARED mimics weightlifting, while treadmill harnesses provide loading during running. NASA also studies immersive cycling environments to support exercise motivation."
+    },
+    {
+      "id": "nasa-hrp-risks",
+      "title": "NASA: Risks of Human Spaceflight",
+      "url": "https://www.nasa.gov/hrp/risks/",
+      "summary": "The Human Research Program investigates health and performance risks associated with spaceflight, including reduced physical capacity, bone fracture risk and behavioral health challenges. A game score cannot assess these risks.",
+      "usedFor": "Organizes the project into separate body-movement, cognitive-task, and evidence-quality observations without turning them into a diagnosis."
+    },
+    {
+      "id": "nasa-hazards",
+      "title": "NASA: Five Hazards of Human Spaceflight",
+      "url": "https://www.nasa.gov/hrp/hazards/",
+      "summary": "NASA groups spaceflight hazards into radiation, isolation and confinement, distance from Earth, altered gravity and hostile or closed environments. These hazards can interact and are studied in space and on Earth.",
+      "usedFor": "Frames the mission context and explains why astronauts need simple, repeatable self-monitoring during long missions."
+    },
+    {
+      "id": "nasa-hrp-research",
+      "title": "NASA: Ongoing HRP Research in Space",
+      "url": "https://www.nasa.gov/hrp/ongoing-hrp-research/",
+      "summary": "NASA documents ongoing Human Research Program investigations into how spaceflight affects human health and performance.",
+      "usedFor": "Supports longitudinal reports that repeat the same observations over time and clearly show the limits of the available evidence."
+    },
+    {
+      "id": "nasa-cognition",
+      "title": "NASA: Peak Performance in Microgravity",
+      "url": "https://www.nasa.gov/missions/station/iss-research/peak-performance-in-microgravity/",
+      "summary": "NASA describes research using physical and mental measurements, including a cognition test battery. One six-month-mission study found generally stable cognitive performance with mild changes in some domains. This game's memory task is not that research test."
+    },
+    {
+      "id": "nasa-sensorimotor",
+      "title": "NASA Human Research Roadmap: Sensorimotor and Vestibular Risk",
+      "url": "https://humanresearchroadmap.nasa.gov/Risks/risk.aspx?i=88",
+      "summary": "NASA investigates how altered gravity can affect orientation, balance, locomotion and manual control, with implications for mission tasks such as vehicle control. This game's docking challenge is a fictional analogy, not operational training."
+    }
+  ],
+  "contexts": {
+    "asteroids": {
+      "title": "Attention under pressure",
+      "text": "NASA studies human performance across interacting spaceflight hazards. This fictional asteroid course turns observation and directional control into play; its score does not measure astronaut readiness or protection from space hazards.",
+      "sourceIds": ["nasa-hazards", "nasa-hrp-risks"]
+    },
+    "memory": {
+      "title": "Remember the flight sequence",
+      "text": "NASA research includes attention, working memory and processing speed. This directional sequence is a game inspired by those topics. It is not NASA's cognition battery and cannot diagnose cognitive changes or show a health benefit.",
+      "sourceIds": ["nasa-cognition"]
+    },
+    "docking": {
+      "title": "Coordinate and align",
+      "text": "Changing gravity can affect orientation and manual control, which NASA studies for mission performance. Aligning this virtual craft is a game analogy; it does not simulate real docking procedures or qualify anyone to operate a spacecraft.",
+      "sourceIds": ["nasa-sensorimotor"]
+    },
+    "exercise": {
+      "title": "Movement and the missing load",
+      "text": "Astronauts use ARED for resistance exercise, plus a treadmill and a cycle ergometer. This camera only tracks movement; real exercise hardware supplies the resistance or loading used in astronaut workouts. Squats, knee lifts and reaches here are a motivational game, not a demonstrated countermeasure for muscle or bone loss.",
+      "sourceIds": ["nasa-exercise", "nasa-bone-muscle", "nasa-hrp-risks"]
+    }
+  }
+}

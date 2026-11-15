@@ -1,0 +1,15 @@
+{
+  "date": "2026-11-14T11:38:47.992Z",
+  "origin": "http://127.0.0.1:4173",
+  "checks": [
+    "Dashboard loads with 4 custom-art missions and genuine React Bits components.",
+    "Camera permission denial recovers to keyboard mode.",
+    "Exercise plays 4+4+4, pause freezes time/input, completion and ready-state reset work.",
+    "Derived history saves, exports and deletes successfully.",
+    "Memory sequence accepts keyboard directions and advances to the next sequence.",
+    "Docking launches with relative keyboard steering and alignment feedback.",
+    "Asteroid flight, shield, steering and navigation-triggered pause work.",
+    "Field guide and controls open; tablet and mobile layouts have no horizontal overflow."
+  ],
+  "errors": []
+}
