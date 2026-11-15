@@ -1,3 +1,4 @@
+import { requestGeminiSuggestions } from './gemini-client.js';
 import { esc } from './report-ui.js';
 import { journalDay, FIELDS, readCheckins, storeCheckin, reviewHealth, CHECKIN_KEY, NASA_SLEEP } from './health-journal.js';
 import { reviewQuestions } from './review-questions.js';
@@ -120,11 +121,9 @@ export function createHealthDashboard({ target, storage, getPlayerName, getRepor
     find('health-ai').onclick = async () => {
       aiPending=true; aiMessage=''; renderQuestions();
       try {
-        const response = await fetch('/api/health-suggestions',{ method:'POST',headers:{'X-Human-Suggestions':'generic-v1'},signal:AbortSignal.timeout(15000) });
-        const result = await response.json();
-        if (!response.ok || !result.selections) throw new Error(result.error || 'Gemini is unavailable.');
-        aiSelections=result.selections; aiMessage='Gemini prioritized the questions above.';
-      } catch(error) { aiMessage=error instanceof SyntaxError?'Gemini is unavailable. Local suggestions are still shown.':error.message; }
+        aiSelections=await requestGeminiSuggestions();
+        aiMessage='Gemini prioritized the questions above.';
+      } catch(error) { aiMessage=error.message+' Local suggestions remain available.'; }
       finally {
         aiPending=false;
         if(opened) refreshQuestions();

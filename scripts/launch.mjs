@@ -3,8 +3,9 @@ import { readFile, stat } from 'node:fs/promises';
 import { resolve, extname, sep } from 'node:path';
 import { execFile } from 'node:child_process';
 import { createSuggestionHandler } from './gemini-suggestions.mjs';
+import { readGeminiConfig } from './gemini-config.mjs';
 
-const suggestions = createSuggestionHandler();
+const suggestions = createSuggestionHandler(readGeminiConfig());
 
 const root=resolve(import.meta.dirname,'../dist');
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.wasm':'application/wasm','.task':'application/octet-stream'};

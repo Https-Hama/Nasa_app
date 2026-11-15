@@ -25,7 +25,7 @@ Open **Mission health** to log resting pulse, temperature in °C, sleep, mood an
 
 Trend flags use changes from a personal baseline to suggest rechecks and questions for a clinician. NASA's [sleep and performance research](https://humanresearchroadmap.nasa.gov/risks/risk.aspx?i=100) informs the choice of signals. The [American Heart Association guidance](https://www.heart.org/en/health-topics/high-blood-pressure/understanding-blood-pressure-readings/monitoring-your-blood-pressure-at-home) is the separate source for the very-high blood pressure warning. A clinician confirms diagnoses.
 
-Gemini is optional. For the local launcher, set `GEMINI_API_KEY` in the server process environment before running `node scripts/launch.mjs`. To enter a replacement key without showing it on screen or putting it in command history, use PowerShell:
+Gemini is optional. Both `npm run dev` and the local launcher read server-only Gemini configuration from the project’s ignored `.env.local` file. Set `GEMINI_API_KEY` there and optionally `GEMINI_MODEL` (default `gemini-3.5-flash-lite`), then restart the server. A process environment key takes priority over file settings; `GOOGLE_API_KEY` is also supported. Keep the key out of frontend code and variables prefixed with `VITE_`. Open the localhost URL printed by the app server so `/api/health-suggestions` is available; a static-only server cannot provide Gemini suggestions. You can also set `GEMINI_API_KEY` in the server process environment before running `node scripts/launch.mjs`. To enter a replacement key without showing it on screen or putting it in command history, use PowerShell:
 
 ```powershell
 $env:GEMINI_API_KEY = Read-Host -Prompt 'Gemini API key' -MaskInput
