@@ -57,6 +57,16 @@ test('a generated Gemini review is retained with its completed report and strips
   assert.equal(storage.getItem(REPORTS_KEY).includes('must not save'), false);
 });
 
+test('new health follow-up and exercise selections survive storage and export-ready report serialization', () => {
+  const storage = memoryStorage();
+  const geminiReview = { summary: 'Flight complete.', strengths: [], observations: [], nextSteps: [], limitations: [],
+    healthChecks: ['sleep-alertness', 'eye-comfort'], spaceExercises: ['ared-squat', 'cevis-cycle'] };
+  storeReport(storage, report('health-review', { conditions: { sessionStage: 'complete' }, geminiReview }));
+  const exported = JSON.parse(JSON.stringify(readReports(storage)[0]));
+  assert.deepEqual(exported.geminiReview.healthChecks, ['sleep-alertness', 'eye-comfort']);
+  assert.deepEqual(exported.geminiReview.spaceExercises, ['ared-squat', 'cevis-cycle']);
+});
+
 test('partial progress cannot retain an AI review before the session has ended', () => {
   const storage = memoryStorage();
   storeReport(storage, report('partial', {conditions:{sessionStage:'flight'},geminiReview:{summary:'Unsupported review.',strengths:[],observations:[],nextSteps:[],limitations:[]}}));

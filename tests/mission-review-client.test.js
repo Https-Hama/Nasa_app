@@ -20,7 +20,15 @@ const validReview = () => ({
   observations: ['One focus cue received an incorrect response.'],
   nextSteps: ['Repeat the same task in a comfortable setting.'],
   limitations: ['Camera measurements were unavailable in this keyboard session.'],
+  healthChecks: ['sleep-alertness', 'eye-comfort'], spaceExercises: ['ared-squat', 'cevis-cycle'],
   provider: 'Gemini', generatedAt: timestamp,
+});
+
+test('new API replies missing health guidance or selecting unavailable body evidence are rejected', async () => {
+  const { healthChecks, spaceExercises, ...legacy } = validReview();
+  for (const review of [legacy, { ...validReview(), healthChecks: ['sleep-alertness', 'eye-comfort', 'movement-comfort'] }]) {
+    await assert.rejects(requestWith(json({ review })), /incomplete mission review/);
+  }
 });
 const json = (value, status = 200) => new Response(JSON.stringify(value), { status, headers: { 'Content-Type': 'application/json; charset=utf-8' } });
 const requestWith = (response, options = {}) => requestMissionReview(record(), null, { fetcher: async () => response, ...options });

@@ -87,3 +87,35 @@ test('a ready state with malformed generated output offers retry instead of empt
   assert.match(html, /saved review could not be opened/);
   assert.match(html, /data-mission-review-retry/);
 });
+
+test('completed reports display concrete health checks, recovery actions and source-backed spacecraft exercise instructions', () => {
+  const html = missionReviewHTML({ record: record({ geminiReview: review({
+    healthChecks: ['eye-comfort', 'sleep-alertness'], spaceExercises: ['ared-heel-raise', 'cevis-cycle'],
+  }) }) });
+  for (const text of ['Health checks & recovery', 'What to check', 'What to do now', 'When to seek help',
+    'Eye comfort and dark circles', '7–9 hours', 'Spacecraft exercise options', 'Resisted heel raises', 'CEVIS', 'Equipment', 'Workload']) {
+    assert.ok(html.includes(text), text);
+  }
+  assert.ok(html.indexOf('Eye comfort and dark circles') < html.indexOf('Sleep and alertness check'));
+  assert.match(html, /href="https:\/\/www\.nasa\.gov\//);
+  assert.match(html, /does not measure dark circles/);
+  assert.doesNotMatch(html, /Resisted squats/);
+});
+
+test('health guidance remains available during loading, failure, disabled generation and legacy saved reviews', () => {
+  for (const state of [{ status: 'pending' }, { status: 'error', error: 'No key configured.' }, { status: 'disabled' }, undefined]) {
+    const html = missionReviewHTML({ record: record(), state });
+    assert.match(html, /Health checks &amp; recovery|Health checks & recovery/);
+    assert.match(html, /Spacecraft exercise options/);
+    assert.match(html, /General guidance/);
+  }
+  const legacy = missionReviewHTML({ record: record({ geminiReview: review() }) });
+  assert.match(legacy, /General guidance/);
+  assert.match(legacy, /Stationary cycling/);
+});
+
+test('unfinished missions and fictional previews cannot present personal health recommendations', () => {
+  for (const raw of [record({ source: 'demo' }), record({ conditions: { sessionStage: 'flight' } }), record({ conditions: { sessionStage: 'mind' } })]) {
+    assert.doesNotMatch(missionReviewHTML({ record: raw }), /Health checks|Spacecraft exercise options|sleep-alertness/);
+  }
+});

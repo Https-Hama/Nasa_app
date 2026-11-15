@@ -1,3 +1,5 @@
+import { HEALTH_CHECK_IDS, SPACE_EXERCISES, buildMissionHealthGuidance } from './mission-health-guidance.js';
+
 const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const forbiddenAdvice = /\b(?:diagnos(?:e|es|ed|ing|is)|prescrib(?:e|es|ed)|medicat(?:e|es|ion|ions)|treatments?|therap(?:y|ies)|dementia|parkinson(?:'?s)?|alzheimer(?:'?s)?|adhd|depression|anxiety|disease|disorder|fatigue|health score)\b/i;
 function unsafeClinicalContent(text) {
@@ -16,7 +18,7 @@ function line(value, maximum) {
 }
 
 /** Whitelist model-generated content before displaying or saving it. */
-export function sanitizeMissionReview(raw) {
+export function sanitizeMissionReview(raw, { requireHealthGuidance = false, mission = null } = {}) {
   if (!object(raw)) return null;
   const summary = line(raw.summary, 700);
   if (!summary) return null;
@@ -27,6 +29,16 @@ export function sanitizeMissionReview(raw) {
     if (values.some(value => value === null)) return null;
     safe[field] = values;
   }
+  const allowedChecks = mission ? buildMissionHealthGuidance(mission).healthChecks.map(item => item.id) : HEALTH_CHECK_IDS;
+  for (const [field, allowed] of [['healthChecks', allowedChecks], ['spaceExercises', SPACE_EXERCISES.map(item => item.id)]]) {
+    if (raw[field] === undefined && !requireHealthGuidance) continue; // Older saved reviews remain readable.
+    const ids = raw[field];
+    if (!Array.isArray(ids) || ids.length < 2 || ids.length > 4 || new Set(ids).size !== ids.length
+      || ids.some(id => !allowed.includes(id))) return null;
+    safe[field] = ids.slice();
+  }
+  if (safe.healthChecks && !['sleep-alertness', 'eye-comfort'].every(id => safe.healthChecks.includes(id))) return null;
+  if (safe.spaceExercises && !['resistance', 'aerobic'].every(kind => SPACE_EXERCISES.some(item => item.kind === kind && safe.spaceExercises.includes(item.id)))) return null;
   safe.provider = 'Gemini';
   safe.generatedAt = typeof raw.generatedAt === 'number' && Number.isFinite(raw.generatedAt)
     && raw.generatedAt >= 0 && raw.generatedAt <= 8640000000000000 ? raw.generatedAt : null;

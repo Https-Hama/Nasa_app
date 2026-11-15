@@ -37,7 +37,7 @@ export async function requestMissionReview(record, previous = null, { fetcher = 
       ? result.error.trim().slice(0, 700)
       : 'Gemini could not review this mission. Your measured report remains available. Please try again.');
   }
-  const review = sanitizeMissionReview(result?.review);
+  const review = sanitizeMissionReview(result?.review, { requireHealthGuidance: true, mission });
   if (!review) throw new Error('Gemini returned an incomplete mission review. Your measured report remains available. Please try again.');
   return review;
 }

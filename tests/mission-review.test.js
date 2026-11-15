@@ -9,7 +9,8 @@ const KEY = 'fictional-review-test-key';
 const PRIVATE = 'PRIVATE-identity-note-camera-payload';
 const review = () => ({ summary: 'You completed the mission and recalled all three memory rounds.',
   strengths: ['You completed 12 pattern answers.'], observations: ['Seven of eight focus responses were correct.'],
-  nextSteps: ['Repeat the same task conditions next time.'], limitations: ['Camera observations are approximate and depend on framing.'] });
+  nextSteps: ['Repeat the same task conditions next time.'], limitations: ['Camera observations are approximate and depend on framing.'],
+  healthChecks: ['sleep-alertness', 'eye-comfort'], spaceExercises: ['ared-squat', 'cevis-cycle'] });
 const response = output => ({ ok: true, status: 200, json: async () => ({ candidates: [{ finishReason: 'STOP',
   content: { parts: [{ text: JSON.stringify(output ?? review()) }] } }] }) });
 function record(overrides = {}) {
@@ -126,9 +127,38 @@ test('Gemini receives only the canonical anonymous mission, a structured schema,
     assert.equal(sent.generationConfig.maxOutputTokens, 1600); assert.equal(sent.generationConfig.responseMimeType, 'application/json');
     assert.match(sent.systemInstruction.parts[0].text, /Null means unavailable/);
     assert.match(sent.systemInstruction.parts[0].text, /do not infer identity/i);
+    assert.ok(sent.generationConfig.responseSchema.required.includes('healthChecks'));
+    assert.ok(sent.generationConfig.responseSchema.required.includes('spaceExercises'));
+    const guidanceOptions = JSON.parse(sent.contents[0].parts[0].text).guidanceOptions;
+    assert.ok(guidanceOptions.healthChecks.some(item => item.id === 'sleep-alertness'));
+    assert.ok(guidanceOptions.spaceExercises.some(item => item.equipment.includes('ARED')));
     return response();
   } });
   assert.equal(result.provider, 'Gemini'); assert.ok(result.generatedAt > 0); assert.equal(result.summary, review().summary);
+});
+
+test('new reviews retain bounded health and exercise selections while old saved reviews remain readable', () => {
+  const safe = sanitizeMissionReview(review());
+  assert.deepEqual(safe.healthChecks, ['sleep-alertness', 'eye-comfort']);
+  assert.deepEqual(safe.spaceExercises, ['ared-squat', 'cevis-cycle']);
+  const { healthChecks, spaceExercises, ...legacy } = review();
+  assert.ok(sanitizeMissionReview(legacy));
+  assert.equal(sanitizeMissionReview(legacy, { requireHealthGuidance: true }), null);
+  for (const invalid of [
+    { healthChecks: ['unknown'] }, { healthChecks: ['sleep-alertness', 'sleep-alertness'] },
+    { spaceExercises: ['unrestrained-jumps', 'cevis-cycle'] },
+    { spaceExercises: ['cevis-cycle', 't2-walk'] }, { spaceExercises: ['ared-squat'] },
+  ]) assert.equal(sanitizeMissionReview({ ...review(), ...invalid }, { requireHealthGuidance: true }), null);
+});
+
+test('the provider must return actionable guidance and cannot select checks unsupported by the mission evidence', async () => {
+  const { healthChecks, spaceExercises, ...legacy } = review();
+  const noCamera = record({ observations: {} });
+  for (const output of [legacy, { ...review(), healthChecks: ['sleep-alertness', 'eye-comfort', 'movement-comfort'] }]) {
+    await assert.rejects(getGeminiMissionReview({ mission: buildMissionReviewPayload(noCamera), key: KEY,
+      fetcher: async () => response(output),
+    }), error => error.code === 'invalid_response');
+  }
 });
 
 test('incomplete, malformed and clinical model replies fail safely without raw response detail', async () => {

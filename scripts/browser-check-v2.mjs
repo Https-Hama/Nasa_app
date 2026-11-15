@@ -12,7 +12,7 @@ await context.route('**/api/mission-review',async route=>{
  assert.ok(raw&&!raw.includes('Flight Test Player')&&!raw.includes('landmarks')&&!raw.includes('diagnosis'));
  missionReviewRequests.push(JSON.parse(raw));
  await new Promise(resolve=>setTimeout(resolve,350));
- await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({review:{summary:'You completed the flight and all three memory rounds. Use the measured task results to guide your next practice session.',strengths:['All three memory rounds were completed.'],observations:['Camera measurements were unavailable for this keyboard session.'],nextSteps:['Repeat the same task conditions for a useful comparison.'],limitations:['A single game session is a limited observation.'],provider:'Gemini',generatedAt:Date.now()}})});
+ await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({review:{summary:'You completed the flight and all three memory rounds. Use the measured task results to guide your next practice session.',strengths:['All three memory rounds were completed.'],observations:['Camera measurements were unavailable for this keyboard session.'],nextSteps:['Repeat the same task conditions for a useful comparison.'],limitations:['A single game session is a limited observation.'],healthChecks:['sleep-alertness','eye-comfort'],spaceExercises:['ared-squat','cevis-cycle'],provider:'Gemini',generatedAt:Date.now()}})});
 });
 page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
 const pass=text=>{checks.push(text);console.log('PASS:',text);};
