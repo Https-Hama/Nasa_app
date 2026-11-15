@@ -2,9 +2,10 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseEnv } from 'node:util';
+import { DEFAULT_GEMINI_MODEL } from './gemini-model.mjs';
+export { DEFAULT_GEMINI_MODEL } from './gemini-model.mjs';
 
 const projectRoot = fileURLToPath(new URL('../', import.meta.url));
-export const DEFAULT_GEMINI_MODEL = 'gemini-3.5-flash-lite';
 
 // Loaded by the server only. These values are never exposed through VITE_ variables.
 export function readGeminiConfig({ root = projectRoot, mode = 'production', env = process.env } = {}) {

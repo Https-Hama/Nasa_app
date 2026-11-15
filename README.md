@@ -75,3 +75,9 @@ NASA resources provide scientific context, not diagnostic thresholds. Session me
 Run npm install, npm run assets, and npm run dev. npm test runs the meaningful unit suite; npm run build creates dist. The current entry point is src/app-v2.js. Runtime libraries, OpenCV, pose/face models, WASM, React Bits and the custom mission artwork are bundled locally. Third-party notices and artwork prompts are included.
 
 See PLAY_GUIDE.md and VERIFICATION.md for operation and testing limits. The existing ZIP files are retained as earlier snapshots. Run this workspace source or its rebuilt dist to use the current portrait, profile and saving fixes.
+
+## Vercel deployment
+
+The repository includes the Node function `api/health-suggestions.js` and `vercel.json`; deploy the repository root with `npm run build` and output directory `dist`. Vite's local middleware is not part of the static build, so uploading `dist` by itself does not deploy the Gemini API.
+
+In the Vercel project, set `GEMINI_API_KEY` for the Production environment (and Preview if needed), then redeploy. The server function reads the runtime environment; the key never enters the browser bundle. `GEMINI_MODEL` is optional. The production site `https://nasa-app-ashy.vercel.app` is explicitly allowed; Vercel's deployment, branch and production URLs are also allowed when its system environment variables are available. For additional custom domains, set `APP_ORIGIN` to their HTTPS origins separated by commas. Requests still require the same host/origin and accept no player data.

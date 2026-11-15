@@ -12,7 +12,7 @@ const jsonResponse = (value, status = 200) => new Response(JSON.stringify(value)
   status,
   headers: { 'Content-Type': 'application/json; charset=utf-8' },
 });
-const requestWith = response => requestGeminiSuggestions({ fetcher: async () => response });
+const requestWith = (response, hostname) => requestGeminiSuggestions({ fetcher: async () => response, hostname });
 
 for (const status of [200, 404]) {
   test(`HTML ${status} explains the missing local Gemini route and how to start it`, async () => {
@@ -30,6 +30,34 @@ for (const status of [200, 404]) {
   });
 }
 
+for (const status of [200, 404]) {
+  test(`hosted HTML ${status} explains how to repair the deployment instead of starting a desktop server`, async () => {
+    const response = new Response('<!doctype html><html><body>Hosted app shell or missing API</body></html>', {
+      status, headers: { 'Content-Type': 'text/html; charset=utf-8' },
+    });
+    await assert.rejects(requestWith(response, 'nasa-app-ashy.vercel.app'), error => {
+      assert.match(error.message, /missing from this deployment/i);
+      assert.match(error.message, /redeploy/i);
+      assert.match(error.message, /API function/i);
+      assert.match(error.message, /GEMINI_API_KEY/);
+      assert.match(error.message, /Production environment/i);
+      assert.doesNotMatch(error.message, /START_HUMAN_EXE|npm run dev|localhost link|unexpected token/i);
+      return true;
+    });
+  });
+}
+
+for (const hostname of ['127.0.0.1', '[::1]', '::1']) {
+  test(`loopback ${hostname} retains actionable local launcher instructions`, async () => {
+    const response = new Response('<html>Missing local route</html>', { status: 404, headers: { 'Content-Type': 'text/html' } });
+    await assert.rejects(requestWith(response, hostname), error => {
+      assert.match(error.message, /START_HUMAN_EXE\.cmd/);
+      assert.match(error.message, /npm run dev/);
+      assert.doesNotMatch(error.message, /Production environment|redeploy/i);
+      return true;
+    });
+  });
+}
 test('a response without a JSON content type reports the missing local service', async () => {
   await assert.rejects(requestWith(new Response('Not found', { status: 404 })), /service is not running at this address/i);
 });
@@ -47,9 +75,9 @@ test('an unsuccessful JSON response without a usable error gets a readable fallb
   await assert.rejects(requestWith(jsonResponse({ error: { upstream: 'unusable error object' } }, 502)), /Gemini could not provide suggestions/);
 });
 
-test('malformed JSON from a local service explains that the response is unreadable', async () => {
+test('malformed JSON explains that the response is unreadable', async () => {
   const response = new Response('{"selections":', { headers: { 'Content-Type': 'application/json' } });
-  await assert.rejects(requestWith(response), /unreadable response.*Restart the app server/i);
+  await assert.rejects(requestWith(response), /unreadable response.*Restart or redeploy the app server/i);
 });
 
 const invalidCandidates = [

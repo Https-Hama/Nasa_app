@@ -41,3 +41,9 @@ The Node suite now has 159 passing tests. Added coverage verifies local dotenv p
 The live Mission health browser check passed on development port 5173: the actual button returned HTTP 200 and displayed three approved suggestions with zero page errors. The production build succeeds. The supplied key was verified directly against Gemini without sending player data or printing the key. A scan confirmed that the generated browser build does not contain it; requests for /.env.local returned 403 in development and 404 through the production launcher.
 
 The same live Mission health button check also passed through the rebuilt production launcher on port 4173: HTTP 200, three approved suggestions, and zero page errors. The temporary production verification server was stopped; the corrected development server remains running on port 5173.
+
+## Hosted Vercel endpoint update — 15 November 2026
+
+The deployed production URL returned HTTP 404 for /api/health-suggestions because the earlier endpoint existed only inside the local Vite/launcher servers. Added a dedicated Node API function plus Vercel build/function configuration, with a 30-second runtime budget. Hosted requests require an exact trusted HTTPS origin matching the request host; localhost remains supported for local play. Runtime Gemini configuration reads hosting environment variables only, without local dotenv files. The frontend now gives deployment-specific guidance for a missing hosted API.
+
+All 180 Node tests and the production Vite build pass, including same-origin hosted acceptance, origin/host/body rejection, public HTTP rejection, preview URLs, production origin fallback, missing runtime configuration, generic-only provider input and preserved local behavior. Live deployment verification follows the GitHub push.

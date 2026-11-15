@@ -1,5 +1,5 @@
 import { QUESTIONS, REVIEW_TOPICS } from '../src/review-questions.js';
-import { DEFAULT_GEMINI_MODEL } from './gemini-config.mjs';
+import { DEFAULT_GEMINI_MODEL } from './gemini-model.mjs';
 
 export class GeminiSuggestionError extends Error {
   constructor(code, message, status = 502) {
@@ -12,7 +12,7 @@ export class GeminiSuggestionError extends Error {
 const invalidResponse = () => new GeminiSuggestionError('invalid_response', 'Gemini could not return a complete suggestion list. Please try again.');
 
 export async function getGeminiSuggestions({ key, model = DEFAULT_GEMINI_MODEL, fetcher = fetch }) {
-  if (!key) throw new GeminiSuggestionError('not_configured', 'Gemini is not configured on the local server. Add the key to .env.local and restart the app.', 503);
+  if (!key) throw new GeminiSuggestionError('not_configured', 'Gemini is not configured on the server. Set GEMINI_API_KEY in the hosting environment and redeploy, or use .env.local for local play.', 503);
   if (!/^[a-z0-9][a-z0-9.-]{0,79}$/i.test(model)) throw new GeminiSuggestionError('invalid_configuration', 'The configured Gemini model is invalid. Check GEMINI_MODEL and restart the app.', 503);
   let response;
   try {
@@ -53,7 +53,7 @@ export async function getGeminiSuggestions({ key, model = DEFAULT_GEMINI_MODEL, 
   } catch { throw invalidResponse(); }
 }
 
-export function createSuggestionHandler({ key = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY, model = process.env.GEMINI_MODEL, fetcher } = {}) {
+export function createSuggestionHandler({ key = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY, model = process.env.GEMINI_MODEL, fetcher, allowedOrigins = [] } = {}) {
   let cached, pending;
   let nextAttempt = 0;
   return async (req, res) => {
@@ -66,14 +66,16 @@ export function createSuggestionHandler({ key = process.env.GEMINI_API_KEY || pr
     const origin = req.headers.origin;
     const host = req.headers.host;
     const localHost = /^(127\.0\.0\.1|localhost|\[::1\])(?::\d+)?$/.test(host ?? '');
+    const localOrigin = localHost && origin === `http://${host}`;
+    const hostedOrigin = allowedOrigins.includes(origin) && origin === `https://${host}`;
     // No health readings, names, notes or reports are accepted by this endpoint.
-    if (req.method !== 'POST' || !localHost || origin !== `http://${host}`
+    if (req.method !== 'POST' || !(localOrigin || hostedOrigin)
         || req.headers['x-human-suggestions'] !== 'generic-v1'
         || Number(req.headers['content-length'] ?? 0) !== 0 || req.headers['transfer-encoding']) {
       req.resume();
-      return respond(403, { error: 'Only the local app can request generic suggestions.', code: 'forbidden' });
+      return respond(403, { error: 'Only this app can request generic suggestions.', code: 'forbidden' });
     }
-    if (!key) return respond(503, { error: 'Gemini is not configured on the local server. Add the key to .env.local and restart the app.', code: 'not_configured' });
+    if (!key) return respond(503, { error: 'Gemini is not configured on the server. Set GEMINI_API_KEY in the hosting environment and redeploy, or use .env.local for local play.', code: 'not_configured' });
     if (cached && Date.now() < cached.expires) return respond(200, { selections: cached.selections });
     if (!pending && Date.now() < nextAttempt) return respond(429, { error: 'Try Gemini again in a moment.', code: 'retry_later' });
     if (!pending) {
