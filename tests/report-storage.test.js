@@ -43,3 +43,22 @@ test('only sanitized derived observations can be persisted', () => {
   assert.equal(raw.includes('landmarks'), false);
   assert.throws(() => storeReport(storage, report('demo', {source: 'demo'})));
 });
+
+
+test('a generated Gemini review is retained with its completed report and strips unknown content', () => {
+  const storage = memoryStorage();
+  const review = {summary:'You completed the flight and memory task.', strengths:['All rounds completed.'], observations:[], nextSteps:['Repeat under the same conditions.'], limitations:['One game session only.'], provider:'unknown', generatedAt:2000, secret:'must not save'};
+  storeReport(storage, report('reviewed', {conditions:{sessionStage:'complete',geminiReviewRequested:true},geminiReview:review}));
+  const restored = readReports(storage)[0];
+  assert.equal(restored.geminiReview.summary, review.summary);
+  assert.equal(restored.geminiReview.provider, 'Gemini');
+  assert.equal(restored.geminiReview.generatedAt, 2000);
+  assert.equal(restored.conditions.geminiReviewRequested, true);
+  assert.equal(storage.getItem(REPORTS_KEY).includes('must not save'), false);
+});
+
+test('partial progress cannot retain an AI review before the session has ended', () => {
+  const storage = memoryStorage();
+  storeReport(storage, report('partial', {conditions:{sessionStage:'flight'},geminiReview:{summary:'Unsupported review.',strengths:[],observations:[],nextSteps:[],limitations:[]}}));
+  assert.equal(readReports(storage)[0].geminiReview, undefined);
+});

@@ -6,6 +6,9 @@
   "functions": {
     "api/health-suggestions.js": {
       "maxDuration": 30
+    },
+    "api/mission-review.js": {
+      "maxDuration": 30
     }
   }
 }

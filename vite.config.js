@@ -1,11 +1,13 @@
 import { defineConfig } from 'vite';
 import { createSuggestionHandler } from './scripts/gemini-suggestions.mjs';
 import { readGeminiConfig } from './scripts/gemini-config.mjs';
+import { createMissionReviewHandler } from './scripts/gemini-mission-review.mjs';
 
 function localSuggestions(server, config) {
   const handle = createSuggestionHandler(config);
+  const review = createMissionReviewHandler(config);
   server.middlewares.use((req, res, next) => {
-    handle(req, res).then(handled => { if (!handled) next(); }).catch(next);
+    (async()=>{if(await review(req,res))return;if(!await handle(req,res))next();})().catch(next);
   });
 }
 

@@ -45,3 +45,11 @@ Mission health exports the selected player's check-ins, mission reports and inde
 The detailed report describes visible events and task performance. It is not a medical diagnosis, clinical cognitive test, overall health score or evidence of fatigue, neurological disease, emotion, bone loss or muscle weakness. Camera motion does not supply astronaut resistance training. Suggested next steps concern camera conditions, repeated comparable sessions, comfortable breaks and qualified clinical review of persistent concerns.
 
 Real-person camera accuracy and performance on your particular hardware still need a playtest. Automated synthetic landmarks and a synthetic camera verify implementation behavior, not clinical validity or human accuracy.
+
+## Gemini mission reviews
+
+After finishing the flight and mind check, the report opens immediately and Gemini automatically reviews its anonymous derived mission summary. A loading panel becomes the written review, which saves with the selected player’s report. If the service fails, the report and charts remain available and Retry Gemini review can try again. Existing completed reports can use Generate Gemini review; partial progress and fictional previews do not upload.
+
+Automatic Gemini mission reviews can be disabled in Preferences. When enabled, task scores, flight results and usable derived camera measurements are sent to Google. Names, video, images, raw landmarks, manual check-ins and diagnosis notes are excluded. The review describes this session and practical play conditions; it is not a medical assessment.
+
+The four new charts show task accuracy, response counts, camera coverage and usable hand travel. Hover or focus a chart for an explanation, or expand its values table. N/A means no usable data. Charts respect the device’s reduced-motion preference.

@@ -1,3 +1,4 @@
+import { sanitizeMissionReview } from './mission-review-schema.js';
 // Only derived summaries belong in persisted reports. No camera payload is copied.
 const TIME_ZONE = 'Asia/Baghdad';
 const PROTOCOL = 'orbital-observation-v2';
@@ -90,6 +91,11 @@ export function sanitizeRecord(raw) {
         attention: sanitizeTask(cognitive.attention, 'attention', taskProtocol),
       },
     };
+    if (conditions.geminiReviewRequested === true) safe.conditions.geminiReviewRequested = true;
+    if (safe.source === 'measured' && safe.conditions.sessionStage === 'complete') {
+      const review = sanitizeMissionReview(raw.geminiReview);
+      if (review) safe.geminiReview = review;
+    }
     if (taskProtocol) safe.taskProtocol = taskProtocol;
     if (safe.source === 'demo') safe.demoLabel = 'DEMO · Synthetic example; not a measured session';
     return safe;

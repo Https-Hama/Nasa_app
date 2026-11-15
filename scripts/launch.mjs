@@ -4,13 +4,17 @@ import { resolve, extname, sep } from 'node:path';
 import { execFile } from 'node:child_process';
 import { createSuggestionHandler } from './gemini-suggestions.mjs';
 import { readGeminiConfig } from './gemini-config.mjs';
+import { createMissionReviewHandler } from './gemini-mission-review.mjs';
 
-const suggestions = createSuggestionHandler(readGeminiConfig());
+const geminiConfig=readGeminiConfig();
+const suggestions = createSuggestionHandler(geminiConfig);
+const missionReview = createMissionReviewHandler(geminiConfig);
 
 const root=resolve(import.meta.dirname,'../dist');
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.wasm':'application/wasm','.task':'application/octet-stream'};
 const server=createServer(async(req,res)=>{
  try{
+  if(await missionReview(req,res))return;
   if(await suggestions(req,res))return;
   const pathname=decodeURIComponent(new URL(req.url,'http://localhost').pathname);
   const file=resolve(root,'.'+(pathname==='/'?'/index.html':pathname));

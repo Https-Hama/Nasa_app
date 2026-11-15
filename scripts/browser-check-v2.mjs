@@ -6,7 +6,14 @@ const chrome=process.env.CHROME_PATH??(process.platform==='win32'?'C:/Program Fi
 await mkdir('artifacts',{recursive:true});
 const browser=await chromium.launch({headless:true,executablePath:chrome,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 const context=await browser.newContext({viewport:{width:1600,height:1050},acceptDownloads:true});
-const page=await context.newPage();const errors=[];const checks=[];
+const page=await context.newPage();const errors=[];const checks=[];const missionReviewRequests=[];
+await context.route('**/api/mission-review',async route=>{
+ const raw=route.request().postData();
+ assert.ok(raw&&!raw.includes('Flight Test Player')&&!raw.includes('landmarks')&&!raw.includes('diagnosis'));
+ missionReviewRequests.push(JSON.parse(raw));
+ await new Promise(resolve=>setTimeout(resolve,350));
+ await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({review:{summary:'You completed the flight and all three memory rounds. Use the measured task results to guide your next practice session.',strengths:['All three memory rounds were completed.'],observations:['Camera measurements were unavailable for this keyboard session.'],nextSteps:['Repeat the same task conditions for a useful comparison.'],limitations:['A single game session is a limited observation.'],provider:'Gemini',generatedAt:Date.now()}})});
+});
 page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
 const pass=text=>{checks.push(text);console.log('PASS:',text);};
 try{
@@ -22,7 +29,7 @@ try{
  await page.screenshot({path:'artifacts/HUMAN-v2-flight.png',fullPage:true});pass('One game, React Bits and separate observation consent render.');
  await page.locator('#demo-preview').click();assert.equal(await page.locator('.demo-banner').isVisible(),true);assert.equal(await page.locator('.trend-svg').count(),2);
  assert.match(await page.locator('.comparison-status').textContent(),/Yesterday/);
- assert.equal(await page.evaluate(()=>localStorage.getItem('human-exe-observations-v2')),null);
+ assert.equal(await page.evaluate(()=>localStorage.getItem('human-exe-observations-v2')),null);assert.equal(missionReviewRequests.length,0,'Fictional previews never upload mission data');
  await page.screenshot({path:'artifacts/HUMAN-v2-report.png',fullPage:true});
  const demoDownload=page.waitForEvent('download');await page.locator('#export-report').click();const demo=await demoDownload;await demo.saveAs('artifacts/demo-report-v2.json');
  const demoJSON=JSON.parse(await readFile('artifacts/demo-report-v2.json','utf8'));assert.equal(demoJSON.record.source,'demo');assert.match(demoJSON.kind,/FICTIONAL/);pass('Detailed demo compares yesterday/today, labels synthetic values and does not save them.');
@@ -72,12 +79,18 @@ try{
  }
  assert.equal(focusCues.filter(cue=>cue==='GO').length,6);assert.equal(focusCues.filter(cue=>cue==='WAIT').length,2);
  await page.waitForSelector('#journal-view:not([hidden])',{timeout:7000});assert.equal(await page.locator('.demo-banner').count(),0);assert.match(await page.locator('.report-summary').textContent(),/Face check unavailable/);
+ await page.locator('.mission-review-ready').waitFor({timeout:10000});
+ await page.waitForFunction(()=>!!JSON.parse(localStorage.getItem('human-exe-observations-v2')||'[]')[0]?.geminiReview);
+ assert.equal(missionReviewRequests.length,1,'Completion automatically requests exactly one Gemini review');
+ assert.equal(missionReviewRequests[0].mission.memory.complete,true);
+ assert.equal(missionReviewRequests[0].mission.focus.complete,true);
+ pass('A completed mission automatically generates and saves its Gemini review without sending the player name or raw camera data.');
  const real=await page.evaluate(()=>JSON.parse(localStorage.getItem('human-exe-observations-v2')));assert.equal(real.length,1);assert.equal(real[0].id,reportId);assert.equal(real[0].source,'measured');assert.equal(real[0].conditions.sessionStage,'complete');assert.equal(real[0].cognitive.memory.rounds,3);assert.equal(real[0].cognitive.memory.protocol,'pattern-memory-3-4-5-random-v3');assert.equal(real[0].cognitive.attention.attempts,8);assert.equal(real[0].cognitive.attention.protocol,'focus-go-no-go-random-v3');assert.ok(real[0].game.shots>0);assert.equal(real[0].observations.face.blinkRate,null);
  pass('Combat fires real shots; manual pause works; visible random memory patterns and eight balanced focus trials complete the same saved report.');
  await page.reload({waitUntil:'networkidle'});
  assert.equal(await page.locator('#player-name').textContent(),'Flight Test Player');
  assert.equal(await page.locator('#player-dialog').isVisible(),false);
- assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('human-exe-observations-v2'))),real);
+ assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('human-exe-observations-v2'))),real);assert.equal(missionReviewRequests.length,1,'Saved reviews do not trigger another provider request');
  await page.locator('[data-view="journal"]').click();
  assert.equal(await page.locator('#current-report').inputValue(),reportId);
  assert.match(await page.locator('.report-summary').textContent(),/Face check unavailable/);

@@ -13,7 +13,7 @@ Double-click **START_HUMAN_EXE.cmd**. Node.js 22 or newer is required. The inclu
 3. Complete the optional relaxed 30-second close-up face check. Follow its live framing and calibration guidance, then recalibrate your controls if you move.
 4. Fly a two-minute orbital defense mission against enemy drones and asteroids. Legs are optional.
 5. Repeat a newly randomized pattern that grows from three to five directions, then complete eight shuffled go/no-go attention trials.
-6. Review the report and compare with earlier sessions. Progress, partial results and completed reports save automatically to the selected player.
+6. Review the report and compare with earlier sessions. Progress, partial results and completed reports save automatically to the selected player. After the flight and mind check finish, Gemini automatically adds a written review of the completed mission summary.
 
 ## Mission health
 
@@ -32,7 +32,7 @@ $env:GEMINI_API_KEY = Read-Host -Prompt 'Gemini API key' -MaskInput
 try { node scripts/launch.mjs } finally { Remove-Item Env:GEMINI_API_KEY }
 ```
 
-Choose **Use Gemini suggestions** in the review section. The server sends the same generic question bank for every request. The browser uses the returned ranking to choose questions locally. Check-in readings and reports are never part of that request. The feature falls back to local questions without a key or connection.
+Choose **Use Gemini suggestions** in the review section. The server sends the same generic question bank for every request. The browser uses the returned ranking to choose questions locally. Check-in readings and reports are never part of that generic-question request. Automatic mission reviews are a separate endpoint: they send only anonymous derived mission measurements and task results, including a quality-gated previous comparison where available. Player names, video, raw landmarks, diagnosis notes and manual health check-ins are excluded. The feature falls back to local questions without a key or connection.
 
 ## Controls
 
@@ -58,7 +58,7 @@ The **Demo preview** contains two clearly marked fictional records. It never ent
 
 The app automatically stores daily check-ins, diagnosis notes, face-check summaries, partial and completed mission summaries, and preferences under the selected player in browser storage on this device. Use the same browser profile and exact localhost address, including the port, to reopen them. A different address or browser has separate storage. Browser storage is not an encrypted medical record system.
 
-Mission health exports the selected player's combined check-in, mission-report and face-check history. Export a backup before clearing site data. Mission health can delete individual check-ins; Health journal can delete saved mission reports. If saving fails, the app displays a warning: keep the page open, retry saving or export the available records before leaving. Video, images and raw landmarks stay out of stored records. Camera controls and observation consent remain separate choices; derived results save automatically.
+Mission health exports the selected player's combined check-in, mission-report and face-check history. Export a backup before clearing site data. Mission health can delete individual check-ins; Health journal can delete saved mission reports. If saving fails, the app displays a warning: keep the page open, retry saving or export the available records before leaving. Video, images and raw landmarks stay out of stored records. Automatic Gemini mission reviews send anonymous derived mission summaries to Google and save the generated review with the local report. Turn Automatic Gemini mission reviews off in Preferences to keep future summaries local; the measured report still saves. Camera controls and observation consent remain separate choices.
 
 ## NASA research basis
 
@@ -81,3 +81,9 @@ See PLAY_GUIDE.md and VERIFICATION.md for operation and testing limits. The exis
 The repository includes the Node function `api/health-suggestions.js` and `vercel.json`; deploy the repository root with `npm run build` and output directory `dist`. Vite's local middleware is not part of the static build, so uploading `dist` by itself does not deploy the Gemini API.
 
 In the Vercel project, set `GEMINI_API_KEY` for the Production environment (and Preview if needed), then redeploy. The server function reads the runtime environment; the key never enters the browser bundle. `GEMINI_MODEL` is optional. The production site `https://nasa-app-ashy.vercel.app` is explicitly allowed; Vercel's deployment, branch and production URLs are also allowed when its system environment variables are available. For additional custom domains, set `APP_ORIGIN` to their HTTPS origins separated by commas. Requests still require the same host/origin and accept no player data.
+
+## Automatic mission review and charts
+
+When a measured mission finishes, its report appears immediately and Gemini reviews the collected flight, memory, focus and usable camera summaries in the background. Missing and partial evidence stays explicit. The written review contains a session summary, strengths, observations, practical next steps and limitations; it is not a medical assessment. The generated review is saved/exported with the player report and restored on reload. An unavailable API leaves the local report intact with a retry button. Older completed reports can request a review manually. Fictional previews never upload data.
+
+Reports include animated task accuracy bars, outcome stacks, camera-coverage rings and quality-gated hand-travel bars. Exact values and explanations remain accessible, missing measurements show N/A, and reduced-motion preferences disable entry animation. Existing comparable-session trend lines also animate.
